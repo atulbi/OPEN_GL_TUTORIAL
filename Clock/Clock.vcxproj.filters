@@ -40,14 +40,14 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Project1\fragment_shader_loader.hpp">
+      <Filter>Resource Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\Project1\resource.h">
-      <Filter>Header Files</Filter>
+      <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Project1\vertex_shader_loader.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Project1\fragment_shader_loader.hpp">
-      <Filter>Header Files</Filter>
+      <Filter>Resource Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
