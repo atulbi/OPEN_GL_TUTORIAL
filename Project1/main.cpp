@@ -132,23 +132,12 @@ int main(void)
 		
 		glBindVertexArray(VertexArrayID[0]);
 		glUseProgram(shaderProgram[0]);
-		/*
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram[0], "changing_color");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
+		
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 		
 		glBindVertexArray(VertexArrayID[1]);
 		glUseProgram(shaderProgram[1]);
-		/*
-		glBindVertexArray(VertexArrayID[1]);
-		glUseProgram(shaderProgram[1]);
-		timeValue = glfwGetTime();
-		greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		vertexColorLocation = glGetUniformLocation(shaderProgram[1], "changing_color");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-		*/
+		
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 		
 

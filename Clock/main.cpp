@@ -18,21 +18,17 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 typedef struct
 {
-	float x;
-	float y;
+	float x[180];
+	float y[180];
 }CIRCLE;
 
 CIRCLE circle;
-void createcircle(int k, int r, int h) {
+void createcircle(float k, float r, float h) {
 	for (int i = 0; i < 180; i++)
 	{
-		circle.x = r * cos(i) - h;
-		circle.y = r * sin(i) + k;
-		glVertex3f(circle.x + k, circle.y - h, 0);
-
-		circle.x = r * cos(i + 0.1) - h;
-		circle.y = r * sin(i + 0.1) + k;
-		glVertex3f(circle.x + k, circle.y - h, 0);
+		circle.x[i] = r * cos(i) - h;
+		circle.y[i] = r * sin(i) + k;
+		
 	}
 }
 
@@ -67,7 +63,9 @@ int main(void)
 	GLuint vertexID = LoadVertexShader("shader.vs");
 	GLuint fragmentID = LoadFragmentShader("shader.fs");
 	GLuint frgamentID2 = LoadFragmentShader("fshader2.fs");
+
 	unsigned int shaderProgram[2];
+
 	shaderProgram[0] = glCreateProgram();
 	glAttachShader(shaderProgram[0], vertexID);
 	glAttachShader(shaderProgram[0], fragmentID);
@@ -87,23 +85,39 @@ int main(void)
 		glGetProgramInfoLog(shaderProgram[0], 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::lINKING::LINKER_FAILED\n" << infoLog << std::endl;
 	}
+
+
 	glDeleteShader(vertexID);
 	glDeleteShader(fragmentID);
 
-	float vertices[] = {
-		-1.0f,0.0f,0.0f,	1.0f , 0.2f ,0.3f ,
-		0.0f,1.0f,0.0f,		0.f , 1.0f , 0.0f,
-		1.0f,0.0f,0.0f,		0.0f , 0.0f , 1.0f,
-		0.0f,-1.0f,0.0f	,	0.0f , 1.0f , 0.0f,
-	};
+	float vertices[1080] ;
+	
+	createcircle(0.0f, 0.5f, 0.0f);
+
+	int j = 0;
+	for (int i = 0; i < 180; i++)
+	{
+		vertices[j++] = circle.x[i];
+		vertices[j++] = circle.y[i];
+		vertices[j++] = 0.0f;
+	}
+
+	createcircle(0.0f, 0.3f, 0.0f);
+	for (int i = 0; i < 180; i++)
+	{
+		vertices[j++] = circle.x[i];
+		vertices[j++] = circle.y[i];
+		vertices[j++] = 0.0f;
+	}
+
+	std::cout << "last :" << j << std::endl;
+
 	unsigned int indices1[] = {  // note that we start from 0!
-		0,1,2// first triangle
-			 // second triangle
+		0,1,2
 	};
 
 	unsigned int indices2[] = {  // note that we start from 0!
-		0,2,3// first triangle
-			 // second triangle
+		0,2,3
 	};
 
 	unsigned int VBO;
@@ -111,36 +125,22 @@ int main(void)
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	unsigned int EBO1;
-	glGenBuffers(1, &EBO1);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO1);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices1), indices1, GL_STATIC_DRAW);
-
-	unsigned int EBO2;
-	glGenBuffers(1, &EBO2);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO2);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices2), indices2, GL_STATIC_DRAW);
-
 
 	GLuint VertexArrayID[2];
 	glGenVertexArrays(2, VertexArrayID);
 
 	glBindVertexArray(VertexArrayID[0]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 180, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	
 
 
 	glBindVertexArray(VertexArrayID[1]);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO2);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(180*sizeof(float)));
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -150,23 +150,13 @@ int main(void)
 
 		glBindVertexArray(VertexArrayID[0]);
 		glUseProgram(shaderProgram[0]);
-		/*
-		float timeValue = glfwGetTime();
-		float greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		int vertexColorLocation = glGetUniformLocation(shaderProgram[0], "changing_color");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);*/
+		
+
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 		glBindVertexArray(VertexArrayID[1]);
 		glUseProgram(shaderProgram[1]);
-		/*
-		glBindVertexArray(VertexArrayID[1]);
-		glUseProgram(shaderProgram[1]);
-		timeValue = glfwGetTime();
-		greenValue = (sin(timeValue) / 2.0f) + 0.5f;
-		vertexColorLocation = glGetUniformLocation(shaderProgram[1], "changing_color");
-		glUniform4f(vertexColorLocation, 0.0f, greenValue, 0.0f, 1.0f);
-		*/
+		
 		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
 
 
