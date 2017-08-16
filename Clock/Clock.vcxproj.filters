@@ -29,12 +29,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Project1\shader.fs">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\Project1\shader.vs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="fshader2.fs" />
     <None Include="shader.fs" />
     <None Include="shader.vs" />

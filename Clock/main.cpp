@@ -18,17 +18,37 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 typedef struct
 {
-	float x[180];
-	float y[180];
+	float x[3600];
+	float y[3600];
 }CIRCLE;
+
 
 CIRCLE circle;
 void createcircle(float k, float r, float h) {
-	for (int i = 0; i < 180; i++)
+	float angle = 0.0f;
+	for (int i = 0; i < 3600; i++)
 	{
-		circle.x[i] = r * cos(i) - h;
-		circle.y[i] = r * sin(i) + k;
+		circle.x[i] = r * cos(angle) - h;
+		circle.y[i] = r * sin(angle) + k;
+		angle = angle + 0.1f;
 		
+	}
+}
+
+void GiveLineVertex(double a[], double start, double length )
+{
+	int k = 0;
+	for ( double i = 0; i <360;)
+	{
+		a[k++] = start * cos(i);
+		a[k++] = start *sin(i);
+		a[k++] = 0.0f;
+		a[k++] = (start+length) * cos(i);
+		a[k++] = (start + length) *sin(i);
+		a[k++] = 0.0f;
+
+		i = i + (double)30;
+
 	}
 }
 
@@ -39,7 +59,7 @@ int main(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	GLFWwindow* window = glfwCreateWindow(1920, 1080, "Window01", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(800, 800, "Window01", NULL, NULL);
 
 	if (window == NULL)
 	{
@@ -54,11 +74,11 @@ int main(void)
 		std::cout << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	glViewport(0, 0, 1920, 1080);
+	glViewport(0, 0, 800, 800);
 
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-	glClearColor(0.3f, 0.4f, 0.7f, 0.9f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	GLuint vertexID = LoadVertexShader("shader.vs");
 	GLuint fragmentID = LoadFragmentShader("shader.fs");
@@ -90,20 +110,24 @@ int main(void)
 	glDeleteShader(vertexID);
 	glDeleteShader(fragmentID);
 
-	float vertices[1080] ;
+	float vertices[21600] ;
+
+	double line_array[72];
+
+	GiveLineVertex(line_array, 0.650, 0.075);
 	
-	createcircle(0.0f, 0.5f, 0.0f);
+	createcircle(0.0f, 0.75f, 0.0f);
 
 	int j = 0;
-	for (int i = 0; i < 180; i++)
+	for (int i = 0; i < 3600; i++)
 	{
 		vertices[j++] = circle.x[i];
 		vertices[j++] = circle.y[i];
 		vertices[j++] = 0.0f;
 	}
 
-	createcircle(0.0f, 0.3f, 0.0f);
-	for (int i = 0; i < 180; i++)
+	createcircle(0.0f, 0.725f, 0.0f);
+	for (int i = 0; i < 3600; i++)
 	{
 		vertices[j++] = circle.x[i];
 		vertices[j++] = circle.y[i];
@@ -112,53 +136,59 @@ int main(void)
 
 	std::cout << "last :" << j << std::endl;
 
-	unsigned int indices1[] = {  // note that we start from 0!
-		0,1,2
-	};
-
-	unsigned int indices2[] = {  // note that we start from 0!
-		0,2,3
-	};
-
+	
 	unsigned int VBO;
 	glGenBuffers(1, &VBO);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
+	unsigned int VBO_LINES;
+	glGenBuffers(1, &VBO_LINES);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_LINES);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(line_array), line_array, GL_STATIC_DRAW);
 
-	GLuint VertexArrayID[2];
-	glGenVertexArrays(2, VertexArrayID);
+	GLuint VertexArrayID[3];
+	glGenVertexArrays(3, VertexArrayID);
 
 	glBindVertexArray(VertexArrayID[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 180, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 	glEnableVertexAttribArray(0);
 	
 
 
 	glBindVertexArray(VertexArrayID[1]);
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(180*sizeof(float)));
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)(3600*sizeof(float)));
+	glEnableVertexAttribArray(0);
+
+	glBindVertexArray(VertexArrayID[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_LINES);
+	glVertexAttribPointer(0, 3, GL_DOUBLE, GL_FALSE, 0, (void*)(0 * sizeof(float)));
 	glEnableVertexAttribArray(0);
 	
+	
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
 	while (true)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
-
+		glPointSize(20.0);
+		glLineWidth(70.0);
 		glBindVertexArray(VertexArrayID[0]);
 		glUseProgram(shaderProgram[0]);
-		
+		glDrawArrays(GL_LINE_STRIP, 0, 3600);
 
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		glPointSize(15.0);
+		glLineWidth(40.0);
 
 		glBindVertexArray(VertexArrayID[1]);
 		glUseProgram(shaderProgram[1]);
-		
-		glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+		glDrawArrays(GL_LINES, 3600,3600);
 
+		glBindVertexArray(VertexArrayID[2]);
+		glUseProgram(shaderProgram[1]);
+		glDrawArrays(GL_LINES, 0, 72);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

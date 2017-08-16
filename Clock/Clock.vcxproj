@@ -123,8 +123,6 @@
     <ClCompile Include="vertex_shader_loader.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Project1\shader.fs" />
-    <None Include="..\Project1\shader.vs" />
     <None Include="fshader2.fs" />
     <None Include="shader.fs" />
     <None Include="shader.vs" />
