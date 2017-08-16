@@ -15,39 +15,42 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Project1\fragment_shader_loader.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Project1\vertex_shader_loader.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\glew_glfw\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fragment_shader_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="vertex_shader_loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Project1\fshader2.fs">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\Project1\shader.fs">
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\Project1\shader.vs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="fshader2.fs" />
+    <None Include="shader.fs" />
+    <None Include="shader.vs" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Project1\fragment_shader_loader.hpp">
-      <Filter>Resource Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Project1\resource.h">
       <Filter>Resource Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Project1\vertex_shader_loader.hpp">
       <Filter>Resource Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fragment_shader_loader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex_shader_loader.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
